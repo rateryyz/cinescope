@@ -6,14 +6,14 @@ import { useFavorites } from '../hooks/useFavorites';
 interface Movie {
   id: number;
   title: string;
-  poster_path: string;
-  backdrop_path: string;
-  vote_average: number;
-  release_date: string;
+  poster_path?: string;
+  backdrop_path?: string;
+  vote_average?: number;
+  release_date?: string;
 }
 
 interface MovieGridProps {
-  movies: Movie[];
+  movies: Movie[] | null;
   onLoadMore?: () => void;
   hasMore?: boolean;
   loading?: boolean;
@@ -21,6 +21,14 @@ interface MovieGridProps {
 
 export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: MovieGridProps) {
   const { favorites, toggleFavorite } = useFavorites();
+
+  if (loading && (!movies || movies.length === 0)) {
+    return <p className="text-center text-muted-foreground">Loading...</p>;
+  }
+
+  if (!loading && (!movies || movies.length === 0)) {
+    return <p className="text-center text-muted-foreground">No movies found.</p>;
+  }
 
   return (
     <div>
@@ -30,7 +38,7 @@ export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: Movi
         animate="animate"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12"
       >
-        {movies.map((movie) => (
+        {movies && movies.map((movie) => (
           <MovieCard
             key={movie.id}
             movie={movie}
@@ -61,3 +69,4 @@ export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: Movi
     </div>
   );
 }
+

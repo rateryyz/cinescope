@@ -2,13 +2,22 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import MovieGrid from '../components/MovieGrid';
-import { searchMovies, Movie, MovieResponse } from '../services/tmdb';
+import { searchMovies } from '../services/tmdb';
 import { fadeIn, slideUp } from '../components/animations/variants';
+
+interface Movie {
+  id: number;
+  title: string;
+  poster_path?: string;
+  backdrop_path?: string;
+  vote_average?: number;
+  release_date?: string;
+}
 
 export default function Search() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<Movie[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -16,12 +25,13 @@ export default function Search() {
 
   useEffect(() => {
     const fetchSearchResults = async () => {
+      if (!query) return;
       setLoading(true);
       setError(null);
       try {
-        const results: MovieResponse = await searchMovies(query, page);
-        setMovies(prevMovies => page === 1 ? results.results : [...prevMovies, ...results.results]);
-        setHasMore(results.page < results.total_pages);
+        const data = await searchMovies(query, page);
+        setMovies(prevMovies => page === 1 ? data.results : [...(prevMovies || []), ...data.results]);
+        setHasMore(data.page < data.total_pages);
       } catch (err) {
         setError('Failed to fetch search results. Please try again.');
       } finally {
@@ -29,9 +39,7 @@ export default function Search() {
       }
     };
 
-    if (query) {
-      fetchSearchResults();
-    }
+    fetchSearchResults();
   }, [query, page]);
 
   const handleLoadMore = () => {
