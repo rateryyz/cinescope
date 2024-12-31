@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Heart, Star } from 'lucide-react';
+import { Heart, Star, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { scaleUp } from './animations/variants';
 
@@ -12,10 +12,12 @@ interface MovieCardProps {
     release_date: string;
   };
   isFavorite: boolean;
+  isWatched: boolean;
   onToggleFavorite: (movieId: number) => void;
+  onToggleWatched: (movieId: number) => void;
 }
 
-export default function MovieCard({ movie, isFavorite, onToggleFavorite }: MovieCardProps) {
+export default function MovieCard({ movie, isFavorite, isWatched, onToggleFavorite, onToggleWatched }: MovieCardProps) {
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : 'https://via.placeholder.com/500x750?text=No+Image';
@@ -35,21 +37,38 @@ export default function MovieCard({ movie, isFavorite, onToggleFavorite }: Movie
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
         
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={(e) => {
-            e.preventDefault();
-            onToggleFavorite(movie.id);
-          }}
-          className="absolute top-4 right-4 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg transition-all duration-300"
-        >
-          <Heart
-            className={`w-5 h-5 transition-colors duration-300 ${
-              isFavorite ? 'fill-primary text-primary' : 'text-primary-foreground'
-            }`}
-          />
-        </motion.button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.preventDefault();
+              onToggleFavorite(movie.id);
+            }}
+            className="p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg transition-all duration-300"
+          >
+            <Heart
+              className={`w-5 h-5 transition-colors duration-300 ${
+                isFavorite ? 'fill-primary text-primary' : 'text-primary-foreground'
+              }`}
+            />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.preventDefault();
+              onToggleWatched(movie.id);
+            }}
+            className="p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg transition-all duration-300"
+          >
+            <Clock
+              className={`w-5 h-5 transition-colors duration-300 ${
+                isWatched ? 'fill-primary text-primary' : 'text-primary-foreground'
+              }`}
+            />
+          </motion.button>
+        </div>
 
         <Link
           to={`/movie/${movie.id}`}
@@ -80,3 +99,4 @@ export default function MovieCard({ movie, isFavorite, onToggleFavorite }: Movie
     </motion.div>
   );
 }
+

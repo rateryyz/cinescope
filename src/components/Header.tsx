@@ -1,8 +1,8 @@
-import { Moon, Sun, Film } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import SearchBar from './SearchBar';
-import { useTheme } from '../hooks/useTheme';
+import { Moon, Sun, Film, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import SearchBar from "./SearchBar";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -15,8 +15,8 @@ export default function Header() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="flex items-center gap-2 text-2xl font-bold text-foreground"
           >
             <Film className="w-8 h-8 text-primary" />
@@ -34,14 +34,24 @@ export default function Header() {
             >
               Favorites
             </Link>
-            
+
+            <Link
+              to="/watched"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Watched
+              </div>
+            </Link>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-accent transition-colors"
             >
-              {theme === 'dark' ? (
+              {theme === "dark" ? (
                 <Sun className="w-5 h-5 text-foreground" />
               ) : (
                 <Moon className="w-5 h-5 text-foreground" />

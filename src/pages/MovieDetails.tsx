@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Play, Heart, Star, Calendar, Clock, ArrowLeft } from 'lucide-react';
 import { getMovieDetails } from '../services/tmdb';
 import { useFavorites } from '../hooks/useFavorites';
+import { useWatched } from '../hooks/useWatched';
+import RatingModal from '../components/RatingModal';
 import { TMDB_CONFIG } from '../config/tmdb';
 
 export default function MovieDetails() {
@@ -11,7 +13,12 @@ export default function MovieDetails() {
   const [movie, setMovie] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { favorites, toggleFavorite } = useFavorites();
+  const { watched, toggleWatched, updateWatchedMovie } = useWatched();
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const isFavorite = favorites.includes(Number(id));
+
+  const watchedMovie = watched.find(w => w.id === Number(id));
+  const isWatched = !!watchedMovie;
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -34,6 +41,17 @@ export default function MovieDetails() {
   const backdropUrl = `${TMDB_CONFIG.imageBaseUrl}/${TMDB_CONFIG.backdropSizes.original}${movie.backdrop_path}`;
   const posterUrl = `${TMDB_CONFIG.imageBaseUrl}/${TMDB_CONFIG.posterSizes.large}${movie.poster_path}`;
   const trailer = movie.videos?.results.find((v: any) => v.type === 'Trailer');
+
+  const handleToggleWatched = () => {
+    toggleWatched(Number(id));
+    if (!isWatched) {
+      setIsRatingModalOpen(true);
+    }
+  };
+
+  const handleRatingSubmit = (rating: number, comment: string) => {
+    updateWatchedMovie(Number(id), rating, comment);
+  };
 
   return (
     <motion.div
@@ -83,18 +101,32 @@ export default function MovieDetails() {
                 <h1 className="text-4xl md:text-5xl font-bold text-foreground">
                   {movie.title}
                 </h1>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => toggleFavorite(movie.id)}
-                  className="p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg"
-                >
-                  <Heart
-                    className={`w-6 h-6 ${
-                      isFavorite ? 'fill-primary text-primary' : 'text-foreground'
-                    }`}
-                  />
-                </motion.button>
+                <div className="flex gap-2">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => toggleFavorite(movie.id)}
+                    className="p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg"
+                  >
+                    <Heart
+                      className={`w-6 h-6 ${
+                        isFavorite ? 'fill-primary text-primary' : 'text-foreground'
+                      }`}
+                    />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleToggleWatched}
+                    className="p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-lg"
+                  >
+                    <Clock
+                      className={`w-6 h-6 ${
+                        isWatched ? 'fill-primary text-primary' : 'text-foreground'
+                      }`}
+                    />
+                  </motion.button>
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-6 text-foreground/80 mb-8">
@@ -125,6 +157,22 @@ export default function MovieDetails() {
                 ))}
               </div>
 
+              {watchedMovie && (
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-4">Your Rating</h2>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Star className="w-5 h-5 fill-primary text-primary" />
+                    <span className="text-lg">{watchedMovie.rating}/5</span>
+                  </div>
+                  {watchedMovie.comment && (
+                    <>
+                      <h3 className="text-xl font-bold mb-2">Your Comment</h3>
+                      <p className="text-foreground/90 mb-6">{watchedMovie.comment}</p>
+                    </>
+                  )}
+                </div>
+              )}
+
               {trailer && (
                 <motion.a
                   href={`https://www.youtube.com/watch?v=${trailer.key}`}
@@ -142,6 +190,13 @@ export default function MovieDetails() {
           </div>
         </div>
       </div>
+      <RatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => setIsRatingModalOpen(false)}
+        onSubmit={handleRatingSubmit}
+        initialRating={watchedMovie?.rating}
+        initialComment={watchedMovie?.comment}
+      />
     </motion.div>
   );
 }
