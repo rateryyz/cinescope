@@ -12,7 +12,7 @@ export default function SearchBar() {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-      setQuery(''); // Clear the query after navigation
+      setQuery('');
     }
   };
 
@@ -32,17 +32,9 @@ export default function SearchBar() {
         onBlur={() => setIsFocused(false)}
         placeholder="Search for movies..."
         aria-label="Search for movies"
-        className="w-full h-10 pl-10 pr-4 rounded-lg bg-muted text-foreground placeholder:text-muted-foreground border border-input focus:border-ring focus:ring-1 focus:ring-ring transition-all duration-200"
+        className="w-full h-9 sm:h-10 pl-9 sm:pl-10 pr-4 text-sm sm:text-base rounded-lg bg-muted text-foreground placeholder:text-muted-foreground border border-input focus:border-ring focus:ring-1 focus:ring-ring transition-all duration-200"
       />
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-      <button
-        type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md bg-transparent hover:bg-muted-foreground/10 transition-colors"
-        aria-label="Submit search"
-      >
-        <Search className="w-4 h-4 text-muted-foreground" />
-      </button>
     </motion.form>
   );
 }
-

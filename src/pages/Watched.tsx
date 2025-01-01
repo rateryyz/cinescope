@@ -6,7 +6,7 @@ import MovieGrid from '../components/MovieGrid';
 import { fadeIn, slideUp } from '../components/animations/variants';
 
 export default function Watched() {
-  const { watched, toggleWatched, updateWatchedMovie } = useWatched();
+  const { watched } = useWatched();
   const [watchedMovies, setWatchedMovies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

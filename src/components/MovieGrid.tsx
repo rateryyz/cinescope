@@ -1,7 +1,7 @@
-import { motion } from 'framer-motion';
-import MovieCard from './MovieCard';
-import { staggerContainer } from './animations/variants';
-import { useFavorites } from '../hooks/useFavorites';
+import { motion } from "framer-motion";
+import MovieCard from "./MovieCard";
+import { staggerContainer } from "./animations/variants";
+import { useFavorites } from "../hooks/useFavorites";
 
 interface Movie {
   id: number;
@@ -19,7 +19,12 @@ interface MovieGridProps {
   loading?: boolean;
 }
 
-export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: MovieGridProps) {
+export default function MovieGrid({
+  movies,
+  onLoadMore,
+  hasMore,
+  loading,
+}: MovieGridProps) {
   const { favorites, toggleFavorite } = useFavorites();
 
   if (loading && (!movies || movies.length === 0)) {
@@ -27,7 +32,9 @@ export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: Movi
   }
 
   if (!loading && (!movies || movies.length === 0)) {
-    return <p className="text-center text-muted-foreground">No movies found.</p>;
+    return (
+      <p className="text-center text-muted-foreground">No movies found.</p>
+    );
   }
 
   return (
@@ -36,20 +43,21 @@ export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: Movi
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12"
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 mb-12"
       >
-        {movies && movies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            movie={movie}
-            isFavorite={favorites.includes(movie.id)}
-            onToggleFavorite={toggleFavorite}
-          />
-        ))}
+        {movies &&
+          movies.map((movie) => (
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              isFavorite={favorites.includes(movie.id)}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))}
       </motion.div>
-      
+
       {hasMore && (
-        <motion.div 
+        <motion.div
           className="flex justify-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -60,9 +68,9 @@ export default function MovieGrid({ movies, onLoadMore, hasMore, loading }: Movi
             whileTap={{ scale: 0.95 }}
             onClick={onLoadMore}
             disabled={loading}
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg shadow-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:hover:brightness-100"
+            className="px-6 sm:px-8 py-2 sm:py-3 bg-primary text-primary-foreground rounded-lg shadow-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:hover:brightness-100 text-sm sm:text-base"
           >
-            {loading ? 'Loading...' : 'Load More'}
+            {loading ? "Loading..." : "Load More"}
           </motion.button>
         </motion.div>
       )}

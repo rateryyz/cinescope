@@ -1,11 +1,13 @@
-import { Moon, Sun, Film, Clock } from "lucide-react";
+import { Moon, Sun, Film, Clock, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import SearchBar from "./SearchBar";
 import { useTheme } from "../hooks/useTheme";
+import { useState } from "react";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <motion.header
@@ -23,7 +25,8 @@ export default function Header() {
             <span>CineScope</span>
           </Link>
 
-          <div className="flex-1 max-w-2xl mx-8">
+          {/* SearchBar only visible in medium and larger screens */}
+          <div className="hidden md:block flex-1 max-w-2xl mx-8">
             <SearchBar />
           </div>
 
@@ -45,6 +48,7 @@ export default function Header() {
               </div>
             </Link>
 
+            {/* Theme Toggle Button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -57,8 +61,44 @@ export default function Header() {
                 <Moon className="w-5 h-5 text-foreground" />
               )}
             </motion.button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2"
+            >
+              <Menu className="w-6 h-6 text-foreground" />
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden py-4"
+          >
+            <div className="mb-4">
+              <SearchBar />
+            </div>
+            <Link
+              to="/favorites"
+              className="block py-2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Favorites
+            </Link>
+            <Link
+              to="/watched"
+              className="block py-2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Watched
+            </Link>
+          </motion.div>
+        )}
       </div>
     </motion.header>
   );

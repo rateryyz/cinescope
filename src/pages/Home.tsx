@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MovieGrid from '../components/MovieGrid';
+import RandomMovie from '../components/RandomMovie';
 import { useMovies } from '../hooks/useMovies';
-import { fadeIn, slideUp } from '../components/animations/variants';
+import { fadeIn } from '../components/animations/variants';
 
 export default function Home() {
   const { movies, loading, error, hasMore, loadMovies } = useMovies();
@@ -29,18 +30,9 @@ export default function Home() {
     >
       <div className="relative z-10 pt-24 pb-12">
         <div className="container mx-auto px-4">
-          <motion.h1 
-            variants={slideUp}
-            className="text-4xl md:text-5xl font-bold mb-2 text-foreground text-center"
-          >
-            Discover Movies
-          </motion.h1>
-          <motion.p 
-            variants={slideUp}
-            className="text-lg text-muted-foreground text-center mb-12"
-          >
-            Explore the latest and greatest in cinema
-          </motion.p>
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-12">
+            <RandomMovie />
+          </div>
           <MovieGrid
             movies={movies}
             onLoadMore={() => loadMovies()}
